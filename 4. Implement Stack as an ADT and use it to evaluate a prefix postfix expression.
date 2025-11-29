@@ -1,0 +1,65 @@
+4. Implement Stack as an ADT and use it to evaluate a prefix/postfix expression.
+Code: #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAXTOK 256
+#define MAXLEN 1024
+
+typedef struct { int a[MAXTOK]; int top; } Stack;
+void init(Stack*s){ s->top=-1; }
+void push(Stack*s,int v){ if(s->top<MAXTOK-1) s->a[++s->top]=v; }
+int pop(Stack*s){ return (s->top==-1)?0:s->a[s->top--]; }
+
+int apply(int a,int b,char op){
+    if(op=='+') return a+b;
+    if(op=='-') return a-b;
+    if(op=='*') return a*b;
+    if(op=='/') return a/b;       /* integer division */
+    if(op=='^'){ int r=1; while(b-->0) r*=a; return r; }
+    return 0;
+}
+
+/* postfix: tokens space-separated */
+int evalPostfix(char *s){
+    Stack st; init(&st);
+    for(char *tok=strtok(s," "); tok; tok=strtok(NULL," ")){
+        if(strlen(tok)==1 && strchr("+-*/^",tok[0])){
+            int b=pop(&st), a=pop(&st);
+            push(&st, apply(a,b,tok[0]));
+        } else push(&st, atoi(tok));
+    }
+    return pop(&st);
+}
+
+/* prefix: tokens space-separated (process right->left) */
+int evalPrefix(char *s){
+    char *toks[MAXTOK]; int tc=0;
+    for(char *tok=strtok(s," "); tok && tc<MAXTOK; tok=strtok(NULL," ")) toks[tc++]=tok;
+    Stack st; init(&st);
+    for(int i=tc-1;i>=0;--i){
+        char *tok=toks[i];
+        if(strlen(tok)==1 && strchr("+-*/^",tok[0])){
+            int a=pop(&st), b=pop(&st);
+            push(&st, apply(a,b,tok[0]));
+        } else push(&st, atoi(tok));
+    }
+    return pop(&st);
+}
+
+int main(){
+    char buf[MAXLEN];
+
+    puts("Postfix (space-separated):");
+    if(!fgets(buf,MAXLEN,stdin)) return 0;
+    buf[strcspn(buf,"\n")] = 0;
+    printf("Result = %d\n\n", evalPostfix(buf));
+
+    puts("Prefix (space-separated):");
+    if(!fgets(buf,MAXLEN,stdin)) return 0;
+    buf[strcspn(buf,"\n")] = 0;
+    printf("Result = %d\n", evalPrefix(buf));
+
+    return 0;
+}
