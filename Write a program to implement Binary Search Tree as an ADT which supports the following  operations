@@ -1,0 +1,131 @@
+Write a program to implement Binary Search Tree as an ADT which supports the following 
+operations: 
+i. Insert an element x 
+Code: #include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *left, *right;
+};
+
+struct Node* createNode(int x) {
+    struct Node* n = (struct Node*)malloc(sizeof(struct Node));
+    n->data = x;
+    n->left = n->right = NULL;
+    return n;
+}
+
+struct Node* insert(struct Node* root, int x) {
+    if (root == NULL)
+        return createNode(x);
+
+    if (x < root->data)
+        root->left = insert(root->left, x);
+    else if (x > root->data)
+        root->right = insert(root->right, x);
+
+    return root;
+}
+
+void inorder(struct Node* root) {
+    if (root == NULL) return;
+    inorder(root->left);
+    printf("%d ", root->data);
+    inorder(root->right);
+}
+
+int main() {
+    struct Node* root = NULL;
+    int x;
+
+    printf("Enter value to insert: ");
+    scanf("%d", &x);
+
+    root = insert(root, x);
+
+    printf("Inorder traversal: ");
+    inorder(root);
+
+    return 0;
+}
+ii. Delete an element x
+Code: struct Node {
+    int data;
+    struct Node *left, *right;
+};
+
+struct Node* findMin(struct Node* root) {
+    while (root->left != NULL)
+        root = root->left;
+    return root;
+}
+
+struct Node* delete(struct Node* root, int x) {
+    if (root == NULL) return NULL;
+
+    if (x < root->data)
+        root->left = delete(root->left, x);
+    else if (x > root->data)
+        root->right = delete(root->right, x);
+    else {  
+        // Node found
+        if (root->left == NULL) {              // 1 child (right) or no child
+            struct Node* temp = root->right;
+            free(root);
+            return temp;
+        }
+        else if (root->right == NULL) {        // 1 child (left)
+            struct Node* temp = root->left;
+            free(root);
+            return temp;
+        }
+        else {                                 // 2 children
+            struct Node* temp = findMin(root->right);
+            root->data = temp->data;
+            root->right = delete(root->right, temp->data);
+        }
+    }
+    return root;
+}
+iii. Search for an element x in the BST
+Code: struct Node {
+    int data;
+    struct Node *left, *right;
+};
+
+struct Node* search(struct Node* root, int x) {
+    if (root == NULL || root->data == x)
+        return root;
+
+    if (x < root->data)
+        return search(root->left, x);
+    else
+        return search(root->right, x);
+}
+iv. Display the elements of the BST in preorder, inorder, and postorder traversal
+Code: struct Node {
+    int data;
+    struct Node *left, *right;
+};
+
+void preorder(struct Node* root) {
+    if (root == NULL) return;
+    printf("%d ", root->data);
+    preorder(root->left);
+    preorder(root->right);
+}
+
+void inorder(struct Node* root) {
+    if (root == NULL) return;
+    inorder(root->left);
+    printf("%d ", root->data);
+    inorder(root->right);
+}
+
+void postorder(struct Node* root) {
+    if (root == NULL) return;
+    postorder(root->left);
+    postorder(root->right);
+    printf("%d ", root->data);
+}
