@@ -1,0 +1,115 @@
+ Write a program to implement circular linked list as an ADT which supports the following 
+operations: 
+i.Insert an element x in the list 
+Code: #include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node* insert(struct Node* head, int x) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = x;
+
+    if (head == NULL) {                 // first node
+        newNode->next = newNode;        // circular link
+        return newNode;
+    }
+
+    struct Node* temp = head;
+    while (temp->next != head)         // reach last node
+        temp = temp->next;
+
+    temp->next = newNode;
+    newNode->next = head;
+
+    return head;
+}
+
+void display(struct Node* head) {
+    if (head == NULL) return;
+    struct Node* temp = head;
+
+    do {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    } while (temp != head);
+
+    printf("(back to head)\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+    int x;
+
+    printf("Enter value: ");
+    scanf("%d", &x);
+
+    head = insert(head, x);
+
+    printf("Circular List: ");
+    display(head);
+
+    return 0;
+}
+ii. Remove an element from the list 
+Code: struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node* delete(struct Node* head, int x) {
+    if (head == NULL) return NULL;
+
+    struct Node *curr = head, *prev = NULL;
+
+    // find node with value x
+    do {
+        if (curr->data == x) break;
+        prev = curr;
+        curr = curr->next;
+    } while (curr != head);
+
+    if (curr->data != x) return head;       // not found
+
+    // only one node
+    if (curr == head && head->next == head) {
+        free(head);
+        return NULL;
+    }
+
+    // delete head
+    if (curr == head) {
+        while (prev->next != head) prev = prev->next;
+        head = head->next;
+        prev->next = head;
+        free(curr);
+        return head;
+    }
+
+    // delete non-head
+    prev->next = curr->next;
+    free(curr);
+    return head;
+}
+iii. Search for an element x in the list and return its pointer
+Code: struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node* search(struct Node* head, int x) {
+    if (head == NULL) return NULL;
+
+    struct Node* temp = head;
+
+    do {
+        if (temp->data == x)
+            return temp;          // return pointer to the node
+        temp = temp->next;
+    } while (temp != head);
+
+    return NULL;                   // not found
+}
