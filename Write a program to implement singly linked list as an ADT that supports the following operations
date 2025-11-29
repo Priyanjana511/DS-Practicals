@@ -1,0 +1,189 @@
+ Write a program to implement singly linked list as an ADT that supports the following operations: 
+i. Insert an element x at the beginning of the singly linked list
+Code: #include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node* insertBegin(struct Node* head, int x) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = x;
+    newNode->next = head;     // new node points to old head
+    head = newNode;           // new node becomes head
+    return head;
+}
+
+void display(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+    int x;
+
+    printf("Enter value to insert at beginning: ");
+    scanf("%d", &x);
+
+    head = insertBegin(head, x);
+
+    printf("Linked List: ");
+    display(head);
+
+    return 0;
+}
+ii) Insert an element x at ith position in the singly linked list 
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node* insertAtPos(struct Node* head, int x, int pos) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = x;
+
+    if (pos == 1) {                 // insert at beginning
+        newNode->next = head;
+        return newNode;
+    }
+
+    struct Node* temp = head;
+    for (int i = 1; i < pos-1 && temp != NULL; i++)
+        temp = temp->next;
+
+    if (temp == NULL) {
+        printf("Invalid position!\n");
+        return head;
+    }
+
+    newNode->next = temp->next;     // link new node
+    temp->next = newNode;           // attach to list
+    return head;
+}
+
+void display(struct Node* head) {
+    while (head != NULL) {
+        printf("%d -> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+    int x, pos;
+
+    printf("Enter value: ");
+    scanf("%d", &x);
+    printf("Enter position: ");
+    scanf("%d", &pos);
+
+    head = insertAtPos(head, x, pos);
+
+    printf("Linked List: ");
+    display(head);
+
+    return 0;
+}
+iii) Remove an element from the beginning of the doubly linked list 
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *prev, *next;
+};
+
+struct Node* deleteBegin(struct Node* head) {
+    if (head == NULL) {
+        printf("List is empty!\n");
+        return NULL;
+    }
+
+    struct Node* temp = head;
+    head = head->next;       // move head to next node
+
+    if (head != NULL)
+        head->prev = NULL;   // update new head
+    
+    free(temp);              // delete old head
+    return head;
+}
+
+void display(struct Node* head) {
+    while (head != NULL) {
+        printf("%d <-> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    // Example list with one node for demonstration
+    struct Node* head = (struct Node*)malloc(sizeof(struct Node));
+    head->data = 50;
+    head->prev = NULL;
+    head->next = NULL;
+
+    printf("Before deletion: ");
+    display(head);
+
+    head = deleteBegin(head);
+
+    printf("After deletion:  ");
+    display(head);
+
+    return 0;
+}
+iv) Remove an element from ith position in the singly linked list.
+Code: struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node* deleteAtPos(struct Node* head, int pos) {
+    if (head == NULL) return NULL;
+
+    if (pos == 1) {                 // delete first node
+        struct Node* temp = head;
+        head = head->next;
+        free(temp);
+        return head;
+    }
+
+    struct Node* temp = head;
+    for (int i = 1; i < pos-1 && temp->next != NULL; i++)
+        temp = temp->next;
+
+    if (temp->next == NULL) return head;   // invalid pos
+
+    struct Node* del = temp->next;
+    temp->next = del->next;
+    free(del);
+
+    return head;
+}
+v) Search for an element x in the singly linked list and return its pointer 
+Code: struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node* search(struct Node* head, int x) {
+    while (head != NULL) {
+        if (head->data == x)
+            return head;        // return pointer to the node
+        head = head->next;
+    }
+    return NULL;                // not found
+}
