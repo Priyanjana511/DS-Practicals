@@ -1,0 +1,110 @@
+Write a program to implement doubly linked list as an ADT that supports the following operations: 
+i. Insert an element x at the beginning of the doubly linked list 
+Code: #include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *prev, *next;
+};
+
+struct Node* insertBegin(struct Node* head, int x) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = x;
+    newNode->prev = NULL;
+    newNode->next = head;
+
+    if (head != NULL)
+        head->prev = newNode;
+
+    return newNode;   // new node becomes head
+}
+
+void display(struct Node* head) {
+    while (head != NULL) {
+        printf("%d <-> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+    int x;
+
+    printf("Enter value to insert: ");
+    scanf("%d", &x);
+
+    head = insertBegin(head, x);
+
+    printf("Doubly Linked List: ");
+    display(head);
+
+    return 0;
+}
+ii. Insert an element x at the end of the doubly linked list 
+Code: struct Node {
+    int data;
+    struct Node *prev, *next;
+};
+
+struct Node* insertEnd(struct Node* head, int x) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = x;
+    newNode->next = NULL;
+
+    if (head == NULL) {            // list empty
+        newNode->prev = NULL;
+        return newNode;
+    }
+
+    struct Node* temp = head;
+    while (temp->next != NULL)
+        temp = temp->next;
+
+    temp->next = newNode;
+    newNode->prev = temp;
+
+    return head;
+}
+iii. Remove an element from the beginning of the doubly linked list 
+Code: struct Node {
+    int data;
+    struct Node *prev, *next;
+};
+
+struct Node* deleteBegin(struct Node* head) {
+    if (head == NULL) return NULL;     // empty list
+
+    struct Node* temp = head;
+    head = head->next;                 // move head forward
+
+    if (head != NULL)
+        head->prev = NULL;             // fix prev link
+
+    free(temp);                        // delete old head
+    return head;
+}
+iv. Remove an element from the end of the doubly linked list 
+struct Node {
+    int data;
+    struct Node *prev, *next;
+};
+
+struct Node* deleteEnd(struct Node* head) {
+    if (head == NULL) return NULL;        // empty list
+
+    if (head->next == NULL) {             // only one node
+        free(head);
+        return NULL;
+    }
+
+    struct Node* temp = head;
+    while (temp->next != NULL)            // go to last node
+        temp = temp->next;
+
+    temp->prev->next = NULL;              // unlink last node
+    free(temp);
+
+    return head;
+}
