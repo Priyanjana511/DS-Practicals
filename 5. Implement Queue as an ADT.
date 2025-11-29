@@ -1,0 +1,69 @@
+Implement Queue as an ADT.
+Code: #include <stdio.h>
+#define MAX 50
+
+typedef struct {
+    int a[MAX];
+    int front, rear;
+} Queue;
+
+void init(Queue *q){
+    q->front = q->rear = -1;
+}
+
+int isEmpty(Queue *q){
+    return q->front == -1;
+}
+
+int isFull(Queue *q){
+    return q->rear == MAX - 1;
+}
+
+void enqueue(Queue *q, int x){
+    if(isFull(q)){
+        printf("Queue Full\n");
+        return;
+    }
+    if(isEmpty(q))
+        q->front = 0;
+    q->a[++q->rear] = x;
+}
+
+int dequeue(Queue *q){
+    if(isEmpty(q)){
+        printf("Queue Empty\n");
+        return -1;
+    }
+    int x = q->a[q->front];
+    if(q->front == q->rear)       // only one element
+        q->front = q->rear = -1;
+    else
+        q->front++;
+    return x;
+}
+
+void display(Queue *q){
+    if(isEmpty(q)){
+        printf("Queue Empty\n");
+        return;
+    }
+    for(int i = q->front; i <= q->rear; i++)
+        printf("%d ", q->a[i]);
+    printf("\n");
+}
+
+int main(){
+    Queue q;
+    init(&q);
+
+    enqueue(&q, 10);
+    enqueue(&q, 20);
+    enqueue(&q, 30);
+
+    display(&q);
+
+    printf("Dequeued: %d\n", dequeue(&q));
+    display(&q);
+
+    return 0;
+}
